@@ -30,11 +30,6 @@ var player = {
   height: 32,
   move: 5,
   
-  draw: function() {
-    canvas.fillStyle = this.color;
-    canvas.fillRect(this.x, this.y, this.width, this.height);
-  },
-  
   moveLeft: function() {
 	if(this.x - this.move > 0)
 		this.x = this.x - this.move;
@@ -60,6 +55,13 @@ var player = {
 		this.y = (CANVAS_HEIGHT - this.height);
   }
 };
+
+player.sprite = Sprite("res/plane.png");
+player.draw = function() {
+  this.sprite.draw(canvas, this.x, this.y);
+};
+
+
 
 var bullets = [];
 
