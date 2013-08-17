@@ -4,7 +4,8 @@ var CANVAS_HEIGHT;
 var FPF = 60 //frames per fly :D
 var MAX_SCREEN_FLIES = 2;
 var SCREEN_TIME = 2;
-
+var SWATTER_IMAGE = 32;
+var PLAYER_IMAGE = 32;
 
 //game-globals
 var ctx = null;
@@ -58,17 +59,31 @@ function drawFingers(args) {
     
     //find the fingers on screen
     var pointablesMap = args.pointablesMap;
-        for (var i in pointablesMap) {
+    for (var i in pointablesMap) {
         var pointable = pointablesMap[i];
         var pos = pointable.tipPosition;
         
-        /*var radius = Math.min(600/Math.abs(pos[2]),20);
-        ctx.beginPath();
-        ctx.arc(pos[0]*4 + CANVAS_WIDTH/3.5,-pos[1]*4 + CANVAS_HEIGHT*1.9,radius,0,2*Math.PI);
-        ctx.fill();*/
         swatter.setPosition(pos[0]*4 + CANVAS_WIDTH/3.5, -pos[1]*4 + CANVAS_HEIGHT*1.9);
         swatter.draw();
-    }
+        var posSwatter = swatter.getPosition();
+        for(var i=0;i<MAX_SCREEN_FLIES;i++){
+            var player = playerArray[i];
+            var posPlayer = player.getPosition();
+            if (Math.abs(posSwatter.x-posPlayer.x)<=32 && Math.abs(posSwatter.y-posPlayer.y)<=32){
+                var fly = new Fly();
+                playerArray[i] = fly;
+                
+                var splatter = new Splatter(posPlayer.x, posPlayer.y);
+                playerArray.push(splatter);
+                
+                
+                
+                break;
+            }
+        }
+        break; //force exit from loop to detect one finger only (can later allow for multiple)
+    
+    }    
 };
 
 function writeHeader(value){
@@ -98,20 +113,19 @@ function update(){
 
 //draws flies to screen
 function draw() {
-    for(var i=0;i<MAX_SCREEN_FLIES;i++){
-        var player = playerArray[i];
-        player.draw();
+    for(var i=0,len=playerArray.length;i<len;i++){
+        var item = playerArray[i];
+        item.draw();
     }
 }
-
 function getRandom(limit){
     return Math.floor((Math.random()*limit)+1);
 }
 
 //player class
 function Fly(){
-    this.x = 220;
-    this.y = 270;
+    this.x = 9999;
+    this.y = 9999;
     this.sprite = Sprite("res/fly.png");
 } 
 
@@ -119,27 +133,42 @@ Fly.prototype.setPosition = function(x, y){
     this.x = x;
     this.y = y;
 }
+Fly.prototype.getPosition = function(){
+    return {
+        x: this.x,
+        y: this.y
+    };
+}
 Fly.prototype.draw = function() {
     this.sprite.draw(ctx, this.x, this.y);
 }
 
 //swatter class
 function Swatter(){
-    this.x = 0;
-    this.y = 0;
+    this.x = 9999;
+    this.y = 9999;
     this.sprite = Sprite("res/swatter.png");
 }
-
 Swatter.prototype.setPosition = function(x, y){
     this.x = x;
     this.y = y;
 }
-
+Swatter.prototype.getPosition = function(){
+    return {
+        x: this.x,
+        y: this.y
+    };
+}
 Swatter.prototype.draw = function() {
     this.sprite.draw(ctx, this.x, this.y);
 }
 
-
-
-
-
+//Splatter
+function Splatter(x, y){
+    this.x = x;
+    this.y = y;
+    this.sprite = Sprite("res/splatter.png");
+}
+Splatter.prototype.draw = function() {
+    this.sprite.draw(ctx, this.x, this.y);
+}
