@@ -11,6 +11,7 @@ var ctx = null;
 var playerArray = [];
 var allowance = 20;
 var fCount = 0; //number of frames completed by flies in current position
+var swatter = null;
 
 $(function(){
 	CANVAS_WIDTH = document.body.clientWidth;
@@ -26,6 +27,7 @@ $(function(){
     
     //Leap Controller
     var controller = new Leap.Controller();
+    swatter = new Swatter();
 
     //initialize the controller
     controller.on('connect', function() {
@@ -60,13 +62,14 @@ function drawFingers(args) {
         var pointable = pointablesMap[i];
         var pos = pointable.tipPosition;
         
-        var radius = Math.min(600/Math.abs(pos[2]),20);
+        /*var radius = Math.min(600/Math.abs(pos[2]),20);
         ctx.beginPath();
         ctx.arc(pos[0]*4 + CANVAS_WIDTH/3.5,-pos[1]*4 + CANVAS_HEIGHT*1.9,radius,0,2*Math.PI);
-        ctx.fill();
+        ctx.fill();*/
+        swatter.setPosition(pos[0]*4 + CANVAS_WIDTH/3.5, -pos[1]*4 + CANVAS_HEIGHT*1.9);
+        swatter.draw();
     }
 };
-
 
 function writeHeader(value){
     $("#connection_state").html(value);
@@ -120,6 +123,21 @@ Fly.prototype.draw = function() {
     this.sprite.draw(ctx, this.x, this.y);
 }
 
+//swatter class
+function Swatter(){
+    this.x = 0;
+    this.y = 0;
+    this.sprite = Sprite("res/swatter.png");
+}
+
+Swatter.prototype.setPosition = function(x, y){
+    this.x = x;
+    this.y = y;
+}
+
+Swatter.prototype.draw = function() {
+    this.sprite.draw(ctx, this.x, this.y);
+}
 
 
 
