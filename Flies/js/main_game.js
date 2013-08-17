@@ -14,6 +14,10 @@ var allowance = 20;
 var fCount = 0; //number of frames completed by flies in current position
 var swatter = null;
 
+//timing and scoring
+var timer = 60;
+var score = 0;
+
 $(function(){
 	CANVAS_WIDTH = document.body.clientWidth;
     CANVAS_HEIGHT = document.body.clientHeight;
@@ -46,6 +50,17 @@ $(function(){
 
     //start the frame-loop
     controller.loop(drawFingers);
+    
+    //start the time-loop
+    var interval = window.setInterval(function(){
+        timer--;
+        writeHeader("Time Left: " + timer + " | Score: " + score);
+        if(timer <= 0) {
+            clearInterval(interval);
+            playerArray = [];
+            writeHeader("Game Over! | Score: " + score);
+        }
+    }, 1000);
 });
 
 
@@ -76,8 +91,7 @@ function drawFingers(args) {
                 var splatter = new Splatter(posPlayer.x, posPlayer.y);
                 playerArray.push(splatter);
                 
-                
-                
+                score++;
                 break;
             }
         }
@@ -120,55 +134,4 @@ function draw() {
 }
 function getRandom(limit){
     return Math.floor((Math.random()*limit)+1);
-}
-
-//player class
-function Fly(){
-    this.x = 9999;
-    this.y = 9999;
-    this.sprite = Sprite("res/fly.png");
-} 
-
-Fly.prototype.setPosition = function(x, y){
-    this.x = x;
-    this.y = y;
-}
-Fly.prototype.getPosition = function(){
-    return {
-        x: this.x,
-        y: this.y
-    };
-}
-Fly.prototype.draw = function() {
-    this.sprite.draw(ctx, this.x, this.y);
-}
-
-//swatter class
-function Swatter(){
-    this.x = 9999;
-    this.y = 9999;
-    this.sprite = Sprite("res/swatter.png");
-}
-Swatter.prototype.setPosition = function(x, y){
-    this.x = x;
-    this.y = y;
-}
-Swatter.prototype.getPosition = function(){
-    return {
-        x: this.x,
-        y: this.y
-    };
-}
-Swatter.prototype.draw = function() {
-    this.sprite.draw(ctx, this.x, this.y);
-}
-
-//Splatter
-function Splatter(x, y){
-    this.x = x;
-    this.y = y;
-    this.sprite = Sprite("res/splatter.png");
-}
-Splatter.prototype.draw = function() {
-    this.sprite.draw(ctx, this.x, this.y);
 }
