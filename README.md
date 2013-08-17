@@ -1,8 +1,6 @@
 html5-experiments
 =================
 
-HTML5 exploration
-
 Invaders1:
 
 - Soon
@@ -12,3 +10,5 @@ Invaders1:
 Flies:
 
 - For the leap-motion controller (js.leapmotion.com)
+- Classes in `js/class.js`
+- Tracks multiple fingers
