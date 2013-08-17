@@ -1,15 +1,14 @@
 //content globals
 var CANVAS_WIDTH;
 var CANVAS_HEIGHT;
-var FPF = 60 //frames per fly :D
+var FPF = 90 //frames per fly :D
 var MAX_SCREEN_FLIES = 2;
 var SCREEN_TIME = 2;
-var SWATTER_IMAGE = 32;
-var PLAYER_IMAGE = 32;
+var FLY_IMAGE = 32;
 
 //game-globals
 var ctx = null;
-var playerArray = [];
+var drawArray = [];
 var allowance = 20;
 var fCount = 0; //number of frames completed by flies in current position
 var swatter = null;
@@ -57,7 +56,7 @@ $(function(){
         writeHeader("Time Left: " + timer + " | Score: " + score);
         if(timer <= 0) {
             clearInterval(interval);
-            playerArray = [];
+            drawArray = [];
             writeHeader("Game Over! | Score: " + score);
         }
     }, 1000);
@@ -78,24 +77,27 @@ function drawFingers(args) {
         var pointable = pointablesMap[i];
         var pos = pointable.tipPosition;
         
+        //transformations might not really work at a different resolution
         swatter.setPosition(pos[0]*4 + CANVAS_WIDTH/3.5, -pos[1]*4 + CANVAS_HEIGHT*1.9);
         swatter.draw();
+        
+        
         var posSwatter = swatter.getPosition();
         for(var i=0;i<MAX_SCREEN_FLIES;i++){
-            var player = playerArray[i];
+            var player = drawArray[i];
             var posPlayer = player.getPosition();
-            if (Math.abs(posSwatter.x-posPlayer.x)<=32 && Math.abs(posSwatter.y-posPlayer.y)<=32){
+            if (Math.abs(posSwatter.x-posPlayer.x)<=FLY_IMAGE && Math.abs(posSwatter.y-posPlayer.y)<=FLY_IMAGE){
                 var fly = new Fly();
-                playerArray[i] = fly;
+                drawArray[i] = fly;
                 
                 var splatter = new Splatter(posPlayer.x, posPlayer.y);
-                playerArray.push(splatter);
+                drawArray.push(splatter);
                 
                 score++;
                 break;
             }
         }
-        break; //force exit from loop to detect one finger only (can later allow for multiple)
+        //break; //force exit from loop to detect one finger only (can later allow for multiple)
     
     }    
 };
@@ -107,8 +109,8 @@ function writeHeader(value){
 //creates the flies
 function createElements(){
     for(var i=0;i<MAX_SCREEN_FLIES;i++){
-        var player = new Fly();
-        playerArray.push(player);
+        var fly = new Fly();
+        drawArray.push(fly);
     }
 }
 
@@ -119,16 +121,16 @@ function update(){
     }else{
         fCount = 0;
         for(var i=0;i<MAX_SCREEN_FLIES;i++){
-            var player = playerArray[i];
-            player.setPosition(getRandom(CANVAS_WIDTH), getRandom(CANVAS_HEIGHT));
+            var fly = drawArray[i];
+            fly.setPosition(getRandom(CANVAS_WIDTH - FLY_IMAGE), getRandom(CANVAS_HEIGHT - FLY_IMAGE));
         }
     }
 }
 
 //draws flies to screen
 function draw() {
-    for(var i=0,len=playerArray.length;i<len;i++){
-        var item = playerArray[i];
+    for(var i=0,len=drawArray.length;i<len;i++){
+        var item = drawArray[i];
         item.draw();
     }
 }
